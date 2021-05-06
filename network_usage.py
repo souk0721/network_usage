@@ -16,13 +16,13 @@ def dbExecute(in_mb,out_mb,start_time,end_time):
 
 def net_usage(inf = config.set_eth_name): #change the inf variable according to the interface
     
-    net_stat = psutil.net_io_counters(pernic=True, nowrap=True)[inf]
+    net_stat = psutil.net_io_counters(pernic=True)[inf]
     net_in_1 = net_stat.bytes_recv
     net_out_1 = net_stat.bytes_sent
     start_time = time.localtime()
     start_time_str = "%04d/%02d/%02d %02d:%02d:%02d" % (start_time.tm_year, start_time.tm_mon, start_time.tm_mday, start_time.tm_hour, start_time.tm_min, start_time.tm_sec)
     time.sleep(config.set_time) ## TIME SETTING 1 = 1SEC
-    net_stat = psutil.net_io_counters(pernic=True, nowrap=True)[inf]
+    net_stat = psutil.net_io_counters(pernic=True)[inf]
     net_in_2 = net_stat.bytes_recv
     net_out_2 = net_stat.bytes_sent
     net_in = round((net_in_2 - net_in_1) / 1024 / 1024, 3)
