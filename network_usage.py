@@ -2,6 +2,7 @@ import psutil
 import time
 import sqlite3
 import config
+import threading
 
 
 def dbExecute(in_mb,out_mb,start_time,end_time):
@@ -61,10 +62,11 @@ def selete():
         print(row) 
     conn.close()
 
-try:
-    dbCreate()
-    net_usage()
-    selete()
-except:
-    net_usage()
-    selete()
+while True:
+    try:
+        dbCreate()
+        net_usage()
+        selete()
+    except:
+        net_usage()
+        selete()
