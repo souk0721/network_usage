@@ -1,12 +1,17 @@
 import psutil
 import time
 import sqlite3
-import config
 import threading
+import configparser
+ 
+config = configparser.ConfigParser()
+config.read('./config.ini',encoding='UTF8')
+key = config['KeyList']
+
 
 
 def dbExecute(in_mb,out_mb,start_time,end_time):
-    conn = sqlite3.connect(config.set_sqldb_name)
+    conn = sqlite3.connect(key['set_sqldb_name'])
     cur = conn.cursor()
     sql = 'INSERT INTO network_usage_data(in_mb,out_mb,start_time,end_time) VALUES (?,?,?,?)'
     # cur.execute(sql,(1,0.23,'2020-04-01 00:00:00.000', '2020-04-01 00:00:00.000'))
@@ -14,14 +19,14 @@ def dbExecute(in_mb,out_mb,start_time,end_time):
     conn.commit() 
     conn.close()
 
-def net_usage(inf = config.set_eth_name): #change the inf variable according to the interface
+def net_usage(inf = key['set_eth_name']): #change the inf variable according to the interface
     
     net_stat = psutil.net_io_counters(pernic=True)[inf]
     net_in_1 = net_stat.bytes_recv
     net_out_1 = net_stat.bytes_sent
     start_time = time.localtime()
     start_time_str = "%04d/%02d/%02d %02d:%02d:%02d" % (start_time.tm_year, start_time.tm_mon, start_time.tm_mday, start_time.tm_hour, start_time.tm_min, start_time.tm_sec)
-    time.sleep(config.set_time) ## TIME SETTING 1 = 1SEC
+    time.sleep(int(key['set_time'])) ## TIME SETTING 1 = 1SEC
     net_stat = psutil.net_io_counters(pernic=True)[inf]
     net_in_2 = net_stat.bytes_recv
     net_out_2 = net_stat.bytes_sent
@@ -35,7 +40,7 @@ def net_usage(inf = config.set_eth_name): #change the inf variable according to 
 
 
 def dbCreate():
-    conn = sqlite3.connect(config.set_sqldb_name) 
+    conn = sqlite3.connect(key['set_sqldb_name']) 
     cur = conn.cursor() 
     conn.execute('CREATE TABLE network_usage_data(id INTEGER PRIMARY KEY AUTOINCREMENT, in_mb REAL, out_mb REAL, start_time TEXT, end_time TEXT)') 
     # cur.executemany( 'INSERT INTO network_usage_data VALUES (?, ?, ?, ?, ?)', 
@@ -54,7 +59,7 @@ def dbCreate():
     
     
 def selete():
-    conn = sqlite3.connect(config.set_sqldb_name) 
+    conn = sqlite3.connect(key['set_sqldb_name']) 
     cur = conn.cursor() 
     cur.execute("SELECT * FROM network_usage_data") 
     rows = cur.fetchall() 
